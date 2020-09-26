@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.3.RELEASE</version>
+        <relativePath/><!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.takehome</groupId>
+    <artifactId>takehome-root</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>takehome-root</name>
+
+    <properties>
+        <java.version>11</java.version>
+
+        <db.jdbc.driver>com.mysql.cj.jdbc.Driver</db.jdbc.driver>
+        <db.jdbc.url>jdbc:mysql://localhost:3306/ny_cab_data?serverTimezone=UTC</db.jdbc.url>
+        <db.jdbc.username>sendon1982</db.jdbc.username>
+        <db.jdbc.password>password</db.jdbc.password>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </dependency>
+
+        <!-- Add cache support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- OpenApi3 dependencies-->
+        <!-- Required for OpenApi maven plugin -->
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser</artifactId>
+            <version>2.0.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>4.3.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-takehome-id</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/take-home-open-api3.yml</inputSpec>
+                            <!-- change this to 'spring' to generate Spring MVC rest controller -->
+                            <generatorName>spring</generatorName>
+                            <library>spring-mvc</library>
+                            <apiPackage>com.takehome.gen.api</apiPackage>
+                            <modelPackage>com.takehome.gen.gen.model</modelPackage>
+                            <generateApis>true</generateApis>
+                            <generateModels>true</generateModels>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <sourceFolder>src/generated/main/java</sourceFolder>
+                                <interfaceOnly>true</interfaceOnly>
+                                <!--<dateLibrary>java8</dateLibrary>-->
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>mysql</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                        <version>3.13.4</version>
+
+                        <executions>
+                            <execution>
+                                <id>jooq-codegen</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>${mysql.version}</version>
+                            </dependency>
+                        </dependencies>
+
+                        <configuration>
+                            <!-- JDBC connection parameters -->
+                            <jdbc>
+                                <driver>${db.jdbc.driver}</driver>
+                                <url>${db.jdbc.url}</url>
+                                <user>${db.jdbc.username}</user>
+                                <password>${db.jdbc.password}</password>
+                            </jdbc>
+
+                            <!-- Generator parameters -->
+                            <generator>
+                                <database>
+                                    <name>org.jooq.meta.mysql.MySQLDatabase</name>
+                                    <includes>.*</includes>
+                                    <excludes></excludes>
+                                    <!-- In case your database supports catalogs, e.g. SQL Server:
+                                    <inputCatalog>public</inputCatalog>
+                                    -->
+                                    <inputSchema>ny_cab_data</inputSchema>
+                                </database>
+                                <target>
+                                    <packageName>com.takehome.dao.jooq.domain</packageName>
+                                    <directory>target/generated-sources/jooq</directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

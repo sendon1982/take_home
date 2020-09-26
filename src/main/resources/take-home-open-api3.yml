@@ -1,0 +1,130 @@
+openapi: 3.0.0
+
+info:
+  description: Take-home api description
+  version: 1.0.0
+  title: Take Home API
+
+security:
+  - ApiKeyAuth: []
+
+servers:
+  - url: 'http://localhost:9801'
+    description: Local / Dev
+    variables:
+      version:
+        default: v1
+        description: API Version
+
+  - url: 'https://take-home-prod.takehome.com'
+    description: Production
+    variables:
+      version:
+        default: v1
+        description: API Version
+tags:
+  - name: Take Home Service
+
+paths:
+  /trip/search:
+    post:
+      tags:
+        - Take Home Service
+      operationId: searchTrip
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripSearchResponse'
+        '403':
+          description: 'API key is missing or invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 'Internal server error, try request again.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-API-KEY
+      in: header
+
+  schemas:
+    TripSearchRequest:
+      type: object
+      properties:
+        medallions:
+          type: array
+          items:
+            type: string
+
+        pickupDate:
+          type: string
+          format: date
+      required:
+        - medallions
+        - pickupDate
+
+    MedallionTrip:
+      type: object
+      properties:
+        medallion:
+          type: string
+        tripCount:
+          type: integer
+          format: int64
+        pickupDate:
+          type: string
+          example: "2020-01-22"
+          format: date
+          pattern: "yyyy-MM-dd"
+
+    TripSearchResponseData:
+      type: object
+      properties:
+        medallionTrips:
+          type: array
+          items:
+            $ref: '#/components/schemas/MedallionTrip'
+
+        pickupDate:
+          type: string
+          format: date
+
+    TripSearchResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TripSearchResponseData'
+
+
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string

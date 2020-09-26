@@ -1,0 +1,24 @@
+server:
+  port: 8848
+
+takeHomeService:
+  db:
+    jdbcUrl: jdbc:mysql://localhost:3306/ny_cab_data?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: sendon1982
+    password: password
+
+spring:
+  application:
+    name: take-home-service
+
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+
+  ### DB config
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${takeHomeService.db.jdbcUrl}
+    username: ${takeHomeService.db.username}
+    password: ${takeHomeService.db.password}
+
