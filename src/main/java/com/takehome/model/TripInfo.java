@@ -13,7 +13,5 @@ public class TripInfo {
 
     private String medallion;
 
-    private int tripCount;
-
     private LocalDate pickupDate;
 }

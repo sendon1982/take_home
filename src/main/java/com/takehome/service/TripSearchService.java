@@ -3,7 +3,7 @@ package com.takehome.service;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.takehome.gen.gen.model.TripSearchResponse;
+import com.takehome.gen.model.TripSearchResponse;
 
 public interface TripSearchService {
 

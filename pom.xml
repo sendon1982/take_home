@@ -15,11 +15,6 @@
 
     <properties>
         <java.version>11</java.version>
-
-        <db.jdbc.driver>com.mysql.cj.jdbc.Driver</db.jdbc.driver>
-        <db.jdbc.url>jdbc:mysql://localhost:3306/ny_cab_data?serverTimezone=UTC</db.jdbc.url>
-        <db.jdbc.username>sendon1982</db.jdbc.username>
-        <db.jdbc.password>password</db.jdbc.password>
     </properties>
 
     <dependencies>
@@ -115,11 +110,10 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/take-home-open-api3.yml</inputSpec>
-                            <!-- change this to 'spring' to generate Spring MVC rest controller -->
                             <generatorName>spring</generatorName>
                             <library>spring-mvc</library>
                             <apiPackage>com.takehome.gen.api</apiPackage>
-                            <modelPackage>com.takehome.gen.gen.model</modelPackage>
+                            <modelPackage>com.takehome.gen.model</modelPackage>
                             <generateApis>true</generateApis>
                             <generateModels>true</generateModels>
                             <generateSupportingFiles>true</generateSupportingFiles>
@@ -142,65 +136,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>mysql</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jooq</groupId>
-                        <artifactId>jooq-codegen-maven</artifactId>
-                        <version>3.13.4</version>
-
-                        <executions>
-                            <execution>
-                                <id>jooq-codegen</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>generate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-
-                        <dependencies>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                                <version>${mysql.version}</version>
-                            </dependency>
-                        </dependencies>
-
-                        <configuration>
-                            <!-- JDBC connection parameters -->
-                            <jdbc>
-                                <driver>${db.jdbc.driver}</driver>
-                                <url>${db.jdbc.url}</url>
-                                <user>${db.jdbc.username}</user>
-                                <password>${db.jdbc.password}</password>
-                            </jdbc>
-
-                            <!-- Generator parameters -->
-                            <generator>
-                                <database>
-                                    <name>org.jooq.meta.mysql.MySQLDatabase</name>
-                                    <includes>.*</includes>
-                                    <excludes></excludes>
-                                    <!-- In case your database supports catalogs, e.g. SQL Server:
-                                    <inputCatalog>public</inputCatalog>
-                                    -->
-                                    <inputSchema>ny_cab_data</inputSchema>
-                                </database>
-                                <target>
-                                    <packageName>com.takehome.dao.jooq.domain</packageName>
-                                    <directory>target/generated-sources/jooq</directory>
-                                </target>
-                            </generator>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
